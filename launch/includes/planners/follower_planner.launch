@@ -1,0 +1,35 @@
+<launch>
+    <node pkg="sesame_navigation" type="follower_uav_planner.py" name="follower_uav_planner" output="screen">
+        <!-- Heightmap settings -->
+        <param name="heightmap_mpp" type="double" value="0.1"/>
+        <param name="heightmap_min_altitude" type="double" value="150.0"/>
+        <param name="heightmap_origin_long" type="double" value="49.5381173342964"/>
+        <param name="heightmap_origin_lat" type="double" value="6.352911227620768"/>
+
+        <!-- Planner & Obstacle avoidance settings -->
+        <param name="travel_dist" type="double" value="1.0"/>
+        <param name="goal_weight" type="double" value="5.0"/>
+        <param name="obstacle_weight" type="double" value="-7.5"/>
+        <param name="altitude_offset" type="double" value="0.5"/>
+
+        <!-- Position tracking settings -->
+        <param name="tracked_drone" type="int" value="1"/>
+        <param name="local_frame" type="string" value="uav_2/odom"/>
+        <param name="max_target_distance" type="double" value="1.0"/>
+        <param name="target_distance" type="double" value="7.0"/>
+        <param name="camera_angle" type="double" value="0.39"/>
+
+        <!-- State Acquisition-->
+        <remap from="/mavros/global_position/global" to="/uav_2/mavros/global_position/global"/>
+        <remap from="/mavros/local_position/pose" to="/uav_2/mavros/local_position/pose"/>
+        <remap from="/mavros/altitude" to="/uav_2/mavros/altitude"/>
+        <remap from="/mavros/state" to="/uav_2/mavros/state"/>
+        <!-- Control -->
+        <remap from="/mavros/setpoint_position/local" to="/uav_2/mavros/setpoint_position/local"/>
+        <remap from="/mavros/setpoint_velocity/cmd_vel" to="/uav_2/mavros/setpoint_velocity/cmd_vel"/>
+        <!-- Drones Detection -->
+        <remap from="drones" to="/vision_stack/filtered_drones"/>
+        <!-- Obstacles Detection -->
+        <remap from="obstacles" to="/vision_stack/filtered_obstacles"/>
+    </node>
+</launch>

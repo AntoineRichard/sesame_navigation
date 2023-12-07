@@ -1,0 +1,15 @@
+<launch>
+    <!--planner-->
+    <include file="$(find sesame_navigation)/launch/includes/planners/sprayer_planner.launch">
+    </include>
+    <!--tfs-->
+    <include file="$(find sesame_navigation)/launch/includes/tfs/tf_map.launch">
+    </include>
+    <include file="$(find sesame_navigation)/launch/includes/tfs/tf_uav_2.launch">
+    </include>
+    <!--obstacle detection-->
+    <include file="$(find sesame_navigation)/launch/includes/vision/detect_obstacle_uav_2.launch">
+    </include>
+    <include file="$(find sesame_navigation)/launch/includes/vision/obstacle_manager.launch">
+    </include>
+</launch>

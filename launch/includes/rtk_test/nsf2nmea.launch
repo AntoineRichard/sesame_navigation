@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="sesame_navigation" type="navsatfix_to_nmea.py" name="navsatfix_to_nmea" output="screen">
+        <remap from="fix" to="/uav_1/mavros/global_position/global"/>
+        <remap from="nmea_sentence" to="/gx5/nmea/sentence"/>
+    </node>
+</launch>

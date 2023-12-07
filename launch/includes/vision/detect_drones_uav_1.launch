@@ -1,0 +1,13 @@
+
+<launch>
+    <node pkg="sesame_navigation" type="detect_drones.py" name="obstacle_drones_uav_1" output="screen">
+        <param name="body_frame" type="string" value="uav_1/base_link"/>
+        <param name="local_frame" type="string" value="uav_1/odom"/>
+        <param name="marker_size" type="double" value="0.15"/>
+        <rosparam param="marker_ids">[1, 2, 3, 4, 5, 6, 7, 8, 9]</rosparam>
+
+        <remap from="/camera/color/image_raw" to="/uav_1/camera/color/image_raw"/>
+        <remap from="/camera/color/camera_info" to="/uav_1/camera/color/camera_info"/>
+        <remap from="drones" to="/vision_stack/drones"/>
+    </node>
+</launch>

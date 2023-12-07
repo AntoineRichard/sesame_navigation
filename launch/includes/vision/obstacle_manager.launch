@@ -1,0 +1,13 @@
+<launch>
+    <node pkg="sesame_navigation" type="obstacle_manager.py" name="obstacle_manager" output="screen">
+        <param name="obstacle_radius" type="double" value="2.5"/>
+        <param name="obstacle_epsilon" type="double" value="0.25"/>
+        <param name="output_frame" type="string" value="map"/>
+        <param name="publish_visualization" type="bool" value="true"/>
+        <rosparam param="viz_marker_color">[1.0, 0.0, 0.0]</rosparam>
+
+        <remap from="input_obstacles" to="/vision_stack/obstacles"/>
+        <remap from="output_obstacles" to="/vision_stack/filtered_obstacles"/>
+        <remap from="obstacles_viz" to="/vision_stack/obstacles_visualization"/>
+    </node>
+</launch>

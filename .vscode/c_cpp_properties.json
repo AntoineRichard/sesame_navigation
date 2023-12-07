@@ -1,0 +1,34 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/antoine/Documents/Sesame/ROS/noetic_ws/devel/include/**",
+        "/home/antoine/Documents/Sesame/ROS/foxy_ws/**",
+        "/opt/ros/noetic/include/**",
+        "/opt/ros/foxy/include/**",
+        "/home/antoine/Downloads/TensorRT-8.4.1.5/include/**",
+	      "/usr/local/cuda/include",
+        "/home/antoine/Documents/Sesame/ROS/noetic_ws/src/detect_and_track/include/**",
+        "/home/antoine/Documents/Sesame/ROS/noetic_ws/src/realsense_gazebo_plugin/include/**",
+        "/home/antoine/Documents/Sesame/ROS/noetic_ws/src/sesame_scenarios/include/**",
+        "/home/antoine/Documents/Sesame/ROS/noetic_ws/src/sesame_ul_uavs/include/**",
+        "/home/antoine/Documents/Sesame/ROS/noetic_ws/src/grvc-ual/ual_backend_mavros/include/**",
+        "/home/antoine/Documents/Sesame/ROS/noetic_ws/src/grvc-ual/uav_abstraction_layer/include/**",
+        "/home/antoine/Documents/Sesame/ROS/noetic_ws/src/vineyard/include/**",
+        "/home/antoine/Documents/Sesame/ROS/noetic_ws/src/sprayer/include/**",
+        "/home/antoine/Documents/Sesame/ROS/noetic_ws/src/sprayer_path_planner/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

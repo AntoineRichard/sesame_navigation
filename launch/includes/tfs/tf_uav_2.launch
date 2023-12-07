@@ -1,0 +1,9 @@
+<launch>
+    <node pkg="sesame_navigation" type="tf_broadcaster_odom.py" name="tf_broadcaster_uav_2" output="screen">
+        <param name="child_frame" type="string" value="uav_2/base_link"/>
+        <param name="parent_frame" type="string" value="uav_2/odom"/>
+
+        <remap from="/mavros/local_position/pose" to="/uav_2/mavros/local_position/pose"/>
+        <remap from="/mavros/local_position/pose_stamped" to="/uav_2/mavros/local_position/pose_stamped"/>
+    </node>
+</launch>

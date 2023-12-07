@@ -1,0 +1,27 @@
+<launch>
+    <arg name="frame_uav_1"  default="uav_1/odom"/>
+    <arg name="frame_uav_2"  default="uav_2/odom"/>
+    <arg name="parent_frame" default="map"/>
+    <arg name="uav_1_px"     default="0.0"/>
+    <arg name="uav_1_py"     default="0.0"/>
+    <arg name="uav_1_pz"     default="0.0"/>
+    <arg name="uav_2_px"     default="-2.0"/>
+    <arg name="uav_2_py"     default="-2.0"/>
+    <arg name="uav_2_pz"     default="0.0"/>
+
+    <node pkg="sesame_navigation" type="tf_broadcaster_map.py" name="tf_broadcaster_map" output="screen">
+        <param name="frame_uav_1" type="string" value="$(arg frame_uav_1)"/>
+        <param name="frame_uav_2" type="string" value="$(arg frame_uav_2)"/>
+        <param name="parent_frame" type="string" value="$(arg parent_frame)"/>
+
+        <param name="uav_1_px" type="double" value="$(arg uav_1_px)"/>
+        <param name="uav_1_py" type="double" value="$(arg uav_1_py)"/>
+        <param name="uav_1_pz" type="double" value="$(arg uav_1_pz)"/>
+
+        <param name="uav_2_px" type="double" value="$(arg uav_2_px)"/>
+        <param name="uav_2_py" type="double" value="$(arg uav_2_py)"/>
+        <param name="uav_2_pz" type="double" value="$(arg uav_2_pz)"/>
+
+        <remap from="/mavros/local_position/pose" to="/uav_2/mavros/local_position/pose"/>
+    </node>
+</launch>

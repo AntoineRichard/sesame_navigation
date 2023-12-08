@@ -5,9 +5,15 @@
         <param name="local_frame" type="string" value="uav_2/odom"/>
         <param name="marker_size" type="double" value="0.15"/>
         <rosparam param="marker_ids">[1, 2, 3, 4, 5, 6, 7, 8, 9]</rosparam>
+        <rosparam param="drones_id_map">
+            {"uav_1":1 , "uav_2":2, "uav_3":3, "uav_4":4, "uav_5":5, "uav_6":6, "uav_7":7, "uav_8":8, "uav_9":9}
+        </rosparam>
+        <param name="use_visualization" type="bool" value="true"/> 
+        <param name="viz_marker_size" type="double" value="0.25"/>
 
         <remap from="/camera/color/image_raw" to="/uav_2/camera/color/image_raw"/>
         <remap from="/camera/color/camera_info" to="/uav_2/camera/color/camera_info"/>
         <remap from="drones" to="/vision_stack/drones"/>
+        <remap from="drone_viz" to="/vision_stack/uav_2_drones_visualization"/>
     </node>
 </launch>

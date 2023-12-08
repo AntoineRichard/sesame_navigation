@@ -1,7 +1,4 @@
 <launch>
-    <!--planner-->
-    <!--include file="$(find sesame_navigation)/launch/includes/planners/sprayer_planner.launch">
-    </include-->
     <!--tfs-->
     <include file="$(find sesame_navigation)/launch/includes/tfs/tf_map.launch">
     </include>

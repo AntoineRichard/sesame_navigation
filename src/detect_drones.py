@@ -11,6 +11,8 @@ from geometry_msgs.msg import PoseArray, PoseStamped, TransformStamped
 from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge
 from sesame_navigation.msg import PointId, PointIdArray
+from visualization_msgs.msg import Marker, MarkerArray
+from colorsys import hsv_to_rgb
 
 import copy
 
@@ -34,6 +36,38 @@ class DetectArucoDrones:
         self.local_frame_ = rospy.get_param("~local_frame", "uav_2/odom")
         self.marker_size_ = rospy.get_param("~marker_size", 0.15)
         self.marker_id_ = rospy.get_param("~markers_id", [1, 2])
+
+        self.use_visualization_ = rospy.get_param("~use_visualization", False)
+        self.viz_marker_size_ = rospy.get_param("~viz_marker_size", 0.25)
+        self.color_map_ = rospy.get_param(
+            "~drones_color_map",
+            {
+                "uav_1": hsv_to_rgb(0.0, 1, 1),
+                "uav_2": hsv_to_rgb(0.5, 1, 1),
+                "uav_3": hsv_to_rgb(0.1, 1, 1),
+                "uav_4": hsv_to_rgb(0.6, 1, 1),
+                "uav_5": hsv_to_rgb(0.2, 1, 1),
+                "uav_6": hsv_to_rgb(0.7, 1, 1),
+                "uav_7": hsv_to_rgb(0.3, 1, 1),
+                "uav_8": hsv_to_rgb(0.8, 1, 1),
+                "uav_9": hsv_to_rgb(0.4, 1, 1),
+            },
+        )
+        self.drones_id_map_ = rospy.get_param(
+            "~drones_id_map",
+            {
+                "uav_1": 1,
+                "uav_2": 2,
+                "uav_3": 3,
+                "uav_4": 4,
+                "uav_5": 5,
+                "uav_6": 6,
+                "uav_7": 7,
+                "uav_8": 8,
+                "uav_9": 9,
+            },
+        )
+        self.inv_drones_id_map_ = {v: k for k, v in self.drones_id_map_.items()}
 
         self.image_ = None
         self.camera_info_ = None
@@ -61,6 +95,7 @@ class DetectArucoDrones:
         )
 
         self.drone_pose_pub_ = rospy.Publisher("drones", PointIdArray, queue_size=1)
+        self.viz_pub_ = rospy.Publisher("drones_viz", MarkerArray, queue_size=1)
 
     def instantiateMarkerSize(self) -> None:
         """
@@ -105,10 +140,36 @@ class DetectArucoDrones:
                     cv_pose = self.getPoseFromCorners(corner)
                     local_point_id, keep = self.transformPoseToLocalFrame(cv_pose)
                     if keep:
-                        local_point_id.id = ids[i]
+                        local_point_id.id = ids[i][0]
                         self.pose_array.points.append(local_point_id)
             if self.pose_array.points:
                 self.drone_pose_pub_.publish(self.pose_array)
+                if self.use_visualization_:
+                    self.visualizeDrones()
+
+    def visualizeDrones(self) -> None:
+        if self.pose_array.points:
+            marker_array = MarkerArray()
+            for i, point in enumerate(self.pose_array.points):
+                marker = Marker()
+                marker.header = copy.copy(self.image_.header)
+                marker.header.frame_id = self.local_frame_
+                marker.id = i
+                marker.type = Marker.SPHERE
+                marker.action = Marker.ADD
+                marker.pose.position = point.position
+                marker.pose.position.z = 0.0
+                marker.pose.orientation.w = 1.0
+                marker.scale.x = self.viz_marker_size_
+                marker.scale.y = self.viz_marker_size_
+                marker.scale.z = self.viz_marker_size_
+                marker.color.r = self.color_map_[self.inv_drones_id_map_[point.id]][0]
+                marker.color.g = self.color_map_[self.inv_drones_id_map_[point.id]][1]
+                marker.color.b = self.color_map_[self.inv_drones_id_map_[point.id]][2]
+                marker.color.a = 1.0
+                marker.lifetime = rospy.Duration(1.0)
+                marker_array.markers.append(marker)
+            self.viz_pub_.publish(marker_array)
 
     def getPoseFromCorners(
         self, corners: List[List[float]]
@@ -173,7 +234,9 @@ class DetectArucoDrones:
                 pose.pose.position.z,
             ]
         )
-        keep = np.sqrt(np.sum(p * p)) < 8.0  # param for thresholding obstacle detection
+        keep = (
+            np.sqrt(np.sum(p * p)) < 12.0
+        )  # param for thresholding obstacle detection
         return pose_id, keep
 
     def cameraInfoCallback(self, msg: CameraInfo) -> None:

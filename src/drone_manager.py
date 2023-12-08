@@ -8,9 +8,10 @@ import rospy
 import tf2_ros
 import tf2_geometry_msgs
 
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, PointStamped
 from sesame_navigation.msg import PointId, PointIdArray
 from visualization_msgs.msg import Marker, MarkerArray
+from std_msgs.msg import Int32, String
 from colorsys import hsv_to_rgb
 
 
@@ -20,14 +21,14 @@ class DroneManager:
     It receives the obstacles from one or more UAVs and publishes the obstacles that
     are active in the map frame."""
 
-    # TODO:
-    # - Add a trigger for each drone to be able to disable the drone if broken.
-    # - Add a trigger to ouput a given drone position as a point stamped message.
     def __init__(self):
         self.publish_rate_ = rospy.get_param("~publish_rate", 10.0)
         self.obstacle_radius_ = rospy.get_param("~obstacle_radius", 2.5)
         self.obstacle_epsilon_ = rospy.get_param("~obstacle_epsilon", 0.25)
         self.output_frame_ = rospy.get_param("~output_frame", "map")
+        self.drone_to_publish_ = rospy.get_param("~drone_to_publish", "uav_1")
+        self.disabled_drones_ = []
+
         self.pose_regex_ = rospy.get_param(
             "~pose_regex", "^/uav_[1-9].*/local_position/pose_stamped$"
         )
@@ -96,9 +97,79 @@ class DroneManager:
         self.drones_sub = rospy.Subscriber(
             "input_drones", PointIdArray, self.dronesCallback
         )
+        self.disable_drone_sub = rospy.Subscriber(
+            "disable_drone", String, self.disableDroneCallback
+        )
+        self.enable_drone_sub = rospy.Subscriber(
+            "enable_drone", String, self.enableDroneCallback
+        )
+        self.request_drone_id_sub = rospy.Subscriber(
+            "request_drone_id", Int32, self.requestDroneIdCallback
+        )
 
+        self.single_drone_point_pub_ = rospy.Publisher(
+            "single_drone_point", PointStamped, queue_size=1
+        )
         self.drones_pub_ = rospy.Publisher("output_drones", PointIdArray, queue_size=1)
         self.viz_pub_ = rospy.Publisher("visualization", MarkerArray, queue_size=1)
+
+    def disableDroneCallback(self, msg: String) -> None:
+        """
+        Callback function for the disable_drone subscriber. It disables the drone
+        with the given ID.
+
+        Args:
+            msg (Int32): Int32 message containing the ID of the drone to disable.
+        """
+
+        if not msg.data in self.drones_to_track_:
+            rospy.logwarn("Drone {} not in list of drones to track".format(msg.data))
+            return
+        if not msg.data in self.disabled_drones_:
+            self.disabled_drones_.append(msg.data)
+            rospy.loginfo("Disabling drone {}".format(msg.data))
+        else:
+            rospy.logwarn("Drone {} already disabled".format(msg.data))
+
+    def enableDroneCallback(self, msg: String) -> None:
+        """
+        Callback function for the enable_drone subscriber. It enables the drone
+        with the given ID.
+
+        Args:
+            msg (Int32): Int32 message containing the ID of the drone to enable.
+        """
+
+        if not msg.data in self.drones_to_track_:
+            rospy.logwarn("Drone {} not in list of drones to track".format(msg.data))
+            return
+        if msg.data in self.disabled_drones_:
+            self.disabled_drones_.remove(msg.data)
+            rospy.loginfo("Enabling drone {}".format(msg.data))
+        else:
+            rospy.logwarn("Drone {} already enabled".format(msg.data))
+
+    def requestDroneIdCallback(self, msg: Int32) -> None:
+        """
+        Callback function for the request_drone_id subscriber. It tells the node
+        which drone to output as a point stamped message.
+
+        Args:
+            msg (Int32): Int32 message containing the ID of the drone to disable.
+        """
+
+        self.drone_to_publish_ = self.inv_drones_id_map_[msg.data]
+
+    def publishSingleDronePoint(self) -> None:
+        """
+        Publishes the position of the drone as a point stamped message.
+        """
+
+        point = PointStamped()
+        point.header.stamp = rospy.Time.now()
+        point.header.frame_id = self.output_frame_
+        point.point = self.tracked_drones_[self.drone_to_publish_]["position"]
+        self.single_drone_point_pub_.publish(point)
 
     def dronesCallback(self, msg: PointIdArray):
         """
@@ -140,13 +211,17 @@ class DroneManager:
                 last_seen = self.tracked_drones_[drone]["timestamp"]
                 time_diff = msg.header.stamp - last_seen
                 # If the drone was seen using vision, update the position
-                if self.tracked_drones_[drone]["vision"]:
+                # Skip if the drone is disabled
+                if (self.tracked_drones_[drone]["vision"]) and (
+                    not drone in self.disabled_drones_
+                ):
                     self.tracked_drones_[drone] = {
                         "vision": True,
                         "position": local_pose.pose.position,
                         "timestamp": msg.header.stamp,
                     }
                 # If the last time the drone was seen is older than 1 second, update the position
+                # Use the position from vision if the drone is disabled
                 elif time_diff.to_sec() > 1.0:
                     self.tracked_drones_[drone] = {
                         "vision": True,
@@ -268,6 +343,7 @@ class DroneManager:
             drones_msg.points = drones
             self.drones_pub_.publish(drones_msg)
             self.publishVisualization()
+            self.publishSingleDronePoint()
             rate.sleep()
 
 

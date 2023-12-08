@@ -454,10 +454,13 @@ class SprayingUAVPlanner:
             - self.altitude_offset_
         )
 
-    def getAltitudeFromHeightMap(self, x, y):
-        x = int((x - self.offset_hmap_[0]) / self.heightmap_mpp_)
-        y = int((y - self.offset_hmap_[1]) / self.heightmap_mpp_)
-        return self.heightmap_[-y, x]
+    def getAltitudeFromHeightMap(self, x: float, y: float) -> float:
+        try:
+            x = int((x - self.offset_hmap_[0]) / self.heightmap_mpp_)
+            y = int((y - self.offset_hmap_[1]) / self.heightmap_mpp_)
+            return self.heightmap_[-y, x]
+        except:
+            return np.max(self.heightmap_)
 
     def buildHeightmap(self) -> None:
         """

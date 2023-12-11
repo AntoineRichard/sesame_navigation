@@ -6,6 +6,16 @@
     <arg name="output_frame"                default="map"/>
     <arg name="use_visualization"           default="false"/>
     <arg name="visualization_marker_size"   default="0.25"/>
+    <arg name="drones_color_map"            default="{'uav_1': [1.00, 0.00, 0.00],
+                                                      'uav_2': [0.00, 0.00, 1.00],
+                                                      'uav_3': [0.75, 0.25, 0.00],
+                                                      'uav_4': [0.00, 0.25, 0.75],
+                                                      'uav_5': [0.50, 0.50, 0.00],
+                                                      'uav_6': [0.00, 0.50, 0.50],
+                                                      'uav_7': [0.25, 0.75, 0.00],
+                                                      'uav_8': [0.00, 0.75, 0.25],
+                                                      'uav_9': [0.00, 1.00, 0.00],
+                                                    }"/>
 
     <arg name="in_drones_topic"     default="/vision_stack/drones"/>
     <arg name="out_drones_topic"    default="/vision_stack/filtered_drones"/>
@@ -26,6 +36,9 @@
         </rosparam>
         <rosparam param="drones_to_track">
             $(arg drones_id_map)
+        </rosparam>
+        <rosparam param="drones_color_map">
+            $(arg drones_color_map)
         </rosparam>
 
         <remap from="input_drones"     to="$(arg in_drones_topic)"/>

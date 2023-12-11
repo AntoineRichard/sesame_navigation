@@ -36,6 +36,7 @@ class DetectArucoDrones:
         self.local_frame_ = rospy.get_param("~local_frame", "uav_2/odom")
         self.marker_size_ = rospy.get_param("~marker_size", 0.15)
         self.marker_id_ = rospy.get_param("~markers_id", [1, 2])
+        self.aruco_size_ = rospy.get_param("~aruco_size", 5)
 
         self.use_visualization_ = rospy.get_param("~use_visualization", False)
         self.viz_marker_size_ = rospy.get_param("~viz_marker_size", 0.25)
@@ -76,8 +77,10 @@ class DetectArucoDrones:
         self.pose_ = None
 
         self.instantiateMarkerSize()
-
-        self.aruco_dict_ = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_100)
+        if self.aruco_size_ == 4:
+            self.aruco_dict_ = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_100)
+        elif self.aruco_size_ == 5:
+            self.aruco_dict_ = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_100)
         self.aruco_params_ = cv2.aruco.DetectorParameters()
         self.detector_ = cv2.aruco_ArucoDetector(self.aruco_dict_, self.aruco_params_)
 

@@ -8,6 +8,7 @@
     <arg name="marker_ids"        default="[1, 2, 3, 4, 5, 6, 7, 8, 9]"/>
     <arg name="uav_1_marker_size" default="0.12"/>
     <arg name="drone_to_publish"  default="uav_1"/>
+    <arg name="aruco_size"        default="4"/>
 
     <arg name="uav_2_camera_topic"      default="/uav_2/camera/color/image_raw"/>
     <arg name="uav_2_camera_info_topic" default="/uav_2/camera/color/camera_info"/>
@@ -21,12 +22,23 @@
     <arg name="use_visualization"         default="true"/>
     <arg name="detect_drone_marker_size"  default="0.25">
     <arg name="manager_drone_marker_size" default="0.25">
+    <arg name="drones_color_map"          default="{'uav_1': [1.00, 0.00, 0.00],
+                                                    'uav_2': [0.00, 0.00, 1.00],
+                                                    'uav_3': [0.75, 0.25, 0.00],
+                                                    'uav_4': [0.00, 0.25, 0.75],
+                                                    'uav_5': [0.50, 0.50, 0.00],
+                                                    'uav_6': [0.00, 0.50, 0.50],
+                                                    'uav_7': [0.25, 0.75, 0.00],
+                                                    'uav_8': [0.00, 0.75, 0.25],
+                                                    'uav_9': [0.00, 1.00, 0.00],
+                                                    }"/>
 
     <arg name="detected_drones_visualization_topic" default="/vision_stack/uav_2_drones_visualization"/>
     <arg name="managed_drones_visualization_topic"  default="/vision_stack/drones_visualization"/>
 
     <!-- Safety arguments -->
     <arg name="max_error"            default="0.5"/>
+
     <arg name="true_pose_topic"      default="/vrpn/uav_1"/>
     <arg name="estimated_pose_topic" default="/sensor_fusion/fused"/>
     <arg name="switch_topic"         default="/switches/enable_estimated_position"/>
@@ -41,6 +53,8 @@
         <arg name="drones_id_map"             value="$(arg drones_id_map)"/>
         <arg name="use_visualization"         value="$(arg use_visualization)"/>
         <arg name="visualization_marker_size" value="$(arg detect_drone_marker_size)">
+        <arg name="aruco_size"                value="$(arg aruco_size)"/>
+        <arg name="drones_color_map"          value="$(arg drones_color_map)"/>
 
         <arg name="camera_topic"      value="$(arg uav_2_camera_topic)"/>
         <arg name="camera_info_topic" value="$(arg uav_2_camera_info_topic)"/>
@@ -56,6 +70,7 @@
         <arg name="output_frame"              value="$(arg global_frame)"/>
         <arg name="use_visualization"         value="$(arg use_visualization)"/>
         <arg name="visualization_marker_size" value="$(arg manager_drone_marker_size)">
+        <arg name="drones_color_map"          value="$(arg drones_color_map)"/>
 
         <arg name="in_drones_topic"  value="$(arg detected_drones_topic)"/>
         <arg name="out_drones_topic" value="$(arg managed_drones_topic)"/>
@@ -65,6 +80,7 @@
     <!-- Safety -->
     <include file="$(find sesame_navigation)/launch/includes/switches/safety_switch.launch">
         <arg name="max_error"            value="$(arg max_error)"/>
+        <arg name="global_frame"         value="$(arg global_frame)"/>
         <arg name="true_pose_topic"      value="$(arg true_pose_topic)"/>
         <arg name="estimated_pose_topic" value="$(arg estimated_pose_topic)"/>
         <arg name="switch_topic"         value="$(arg switch_topic)"/>

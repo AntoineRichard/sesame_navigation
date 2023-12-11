@@ -1,21 +1,39 @@
 <launch>
+    <arg name="drone_to_publish"            default="uav_1"/>
+    <arg name="marker_ids"                  default="[1, 2, 3, 4, 5, 6, 7, 8, 9]"/>
+    <arg name="drones_id_map"               default="{'uav_1':1 , 'uav_2':2, 'uav_3':3, 'uav_4':4, 'uav_5':5, 'uav_6':6, 'uav_7':7, 'uav_8':8, 'uav_9':9}"/>
+    <arg name="pose_regex"                  default="^/uav_[1-9].*/local_position/pose_stamped$"/>
+    <arg name="output_frame"                default="map"/>
+    <arg name="use_visualization"           default="false"/>
+    <arg name="visualization_marker_size"   default="0.25"/>
+
+    <arg name="in_drones_topic"     default="/vision_stack/drones"/>
+    <arg name="out_drones_topic"    default="/vision_stack/filtered_drones"/>
+    <arg name="viz_topic"           default="/vision_stack/drones_visualization"/>
+    <arg name="disable_drone_topic" default="/vision_stack/disable_drone_tracking_by_name"/>
+    <arg name="enable_drone_topic"  default="/vision_stack/enable_drone_tracking_by_name"/>
+    <arg name="request_drone_topic" default="/vision_stack/request_drone_position_by_name"/>
+
     <node pkg="sesame_navigation" type="drone_manager.py" name="drone_manager" output="screen">
-        <param name="obstacle_radius" type="double" value="2.5"/>
-        <param name="obstacle_epsilon" type="double" value="0.25"/>
-        <param name="output_frame" type="string" value="map"/>
-        <param name="pose_regex" type="string" value="^/uav_[1-9].*/local_position/pose_stamped$"/>
+        <param name="output_frame"      type="string" value="$(arg output_frame)"/>
+        <param name="pose_regex"        type="string" value="$(arg pose_regex)"/>
+        <param name="use_visualization" type="bool"   value="$(arg use_visualization)"/> 
+        <param name="drone_to_publish"  type="string" value="$(arg drone_to_publish)"/>
+        <param name="marker_size"       type="double" value="$(arg visualization_marker_size)"/>
+
         <rosparam param="drones_id_map">
-            {"uav_1":1 , "uav_2":2, "uav_3":3, "uav_4":4, "uav_5":5, "uav_6":6, "uav_7":7, "uav_8":8, "uav_9":9}
+            $(arg marker_ids)
         </rosparam>
         <rosparam param="drones_to_track">
-            ["uav_1", "uav_2", "uav_3", "uav_4", "uav_5", "uav_6", "uav_7", "uav_8", "uav_9"]
+            $(arg drones_id_map)
         </rosparam>
-        <param name="use_visualization" type="bool" value="true"/> 
-        <param name="marker_size" type="double" value="0.25"/>
 
-        <remap from="input_drones" to="/vision_stack/drones"/>
-        <remap from="output_drones" to="/vision_stack/filtered_drones"/>
-        <remap from="visualization" to="/vision_stack/drones_visualization"/>
+        <remap from="input_drones"     to="$(arg in_drones_topic)"/>
+        <remap from="output_drones"    to="$(arg out_drones_topic)"/>
+        <remap from="visualization"    to="$(arg viz_topic)"/>
+        <remap from="disable_drone"    to="$(arg disable_drone_topic)"/>
+        <remap from="enable_drone"     to="$(arg enable_drone_topic)"/>
+        <remap from="request_drone_id" to="$(arg request_drone_topic)"/>
     </node>
 </launch>
 

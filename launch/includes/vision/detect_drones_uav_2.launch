@@ -1,11 +1,11 @@
 <launch>
-    <arg name="body_frame"        default="uav_2/base_link"/>
-    <arg name="local_frame"       default="uav_2/odom"/>
-    <arg name="marker_size"       default="0.15"/>
-    <arg name="marker_ids"        default="[1, 2, 3, 4, 5, 6, 7, 8, 9]"/>
-    <arg name="drones_id_map"     default="{'uav_1':1 , 'uav_2':2, 'uav_3':3, 'uav_4':4, 'uav_5':5, 'uav_6':6, 'uav_7':7, 'uav_8':8, 'uav_9':9}"/>
-    <arg name="use_visualization" default="true"/>
-    <arg name="viz_marker_size"   default="0.25"/>
+    <arg name="body_frame"                  default="uav_2/base_link"/>
+    <arg name="local_frame"                 default="uav_2/odom"/>
+    <arg name="marker_size"                 default="0.15"/>
+    <arg name="marker_ids"                  default="[1, 2, 3, 4, 5, 6, 7, 8, 9]"/>
+    <arg name="drones_id_map"               default="{'uav_1':1 , 'uav_2':2, 'uav_3':3, 'uav_4':4, 'uav_5':5, 'uav_6':6, 'uav_7':7, 'uav_8':8, 'uav_9':9}"/>
+    <arg name="use_visualization"           default="true"/>
+    <arg name="visualization_marker_size"   default="0.25"/>
 
     <arg name="camera_topic"      default="/uav_2/camera/color/image_raw"/>
     <arg name="camera_info_topic" default="/uav_2/camera/color/camera_info"/>
@@ -23,7 +23,7 @@
             $(arg drones_id_map)
         </rosparam>
         <param name="use_visualization" type="bool" value="$(arg use_visualization)"/> 
-        <param name="viz_marker_size" type="double" value="$(arg viz_marker_size)"/>
+        <param name="viz_marker_size" type="double" value="$(arg visualization_marker_size)"/>
 
         <remap from="/camera/color/image_raw" to="$(arg camera_topic)"/>
         <remap from="/camera/color/camera_info" to="$(arg camera_info_topic)"/>

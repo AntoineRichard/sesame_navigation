@@ -64,4 +64,10 @@
 
     <!-- Safety -->
     <include file="$(find sesame_navigation)/launch/includes/switches/safety_switch.launch">
+        <arg name="max_error"            value="$(arg max_error)"/>
+        <arg name="true_pose_topic"      value="$(arg true_pose_topic)"/>
+        <arg name="estimated_pose_topic" value="$(arg estimated_pose_topic)"/>
+        <arg name="switch_topic"         value="$(arg switch_topic)"/>
+        <arg name="output_topic"         value="$(arg output_topic)"/>
+    </include>
 </launch>

@@ -1,0 +1,16 @@
+<launch>
+    <arg name="max_error"            default="0.5"/>
+    <arg name="true_pose_topic"      default="/vrpn/uav_1"/>
+    <arg name="estimated_pose_topic" default="/sensor_fusion/fused"/>
+    <arg name="switch_topic"         default="/switches/enable_estimated_position"/>
+    <arg name="output_topic"         default="/uav_1/mavros/vision_pose"/>
+
+    <node pkg="sesame_navigation" type="tf_broadcaster_map.py" name="tf_broadcaster_map" output="screen">
+        <param name="max_error" type="string" value="$(arg max_error)"/>
+
+        <remap from="true_pose"      to="$(arg true_pose_topic)"/>
+        <remap from="estimated_pose" to="$(arg estimated_pose_topic)"/>
+        <remap from="switch"         to="$(arg switch_topic)"/>
+        <remap from="vision_pose"    to="$(arg output_topic)"/>
+    </node>
+</launch>

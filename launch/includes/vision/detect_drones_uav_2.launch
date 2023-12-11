@@ -2,30 +2,35 @@
     <arg name="body_frame"                  default="uav_2/base_link"/>
     <arg name="local_frame"                 default="uav_2/odom"/>
     <arg name="marker_size"                 default="0.15"/>
-    <arg name="marker_ids"                  default="[1, 2, 3, 4, 5, 6, 7, 8, 9]"/>
     <arg name="drones_id_map"               default="{'uav_1':1 , 'uav_2':2, 'uav_3':3, 'uav_4':4, 'uav_5':5, 'uav_6':6, 'uav_7':7, 'uav_8':8, 'uav_9':9}"/>
     <arg name="use_visualization"           default="true"/>
     <arg name="visualization_marker_size"   default="0.25"/>
     <arg name="aruco_size"                  default="5"/>
+    <arg name="drones_color_map"            default="{'uav_1': [1.00, 0.00, 0.00],
+                                                      'uav_2': [0.00, 0.00, 1.00],
+                                                      'uav_3': [0.75, 0.25, 0.00],
+                                                      'uav_4': [0.00, 0.25, 0.75],
+                                                      'uav_5': [0.50, 0.50, 0.00],
+                                                      'uav_6': [0.00, 0.50, 0.50],
+                                                      'uav_7': [0.25, 0.75, 0.00],
+                                                      'uav_8': [0.00, 0.75, 0.25],
+                                                      'uav_9': [0.00, 1.00, 0.00],
+                                                    }"/>
 
     <arg name="camera_topic"      default="/uav_2/camera/color/image_raw"/>
     <arg name="camera_info_topic" default="/uav_2/camera/color/camera_info"/>
     <arg name="drones_topic"      default="/vision_stack/drones"/>
     <arg name="drone_viz_topic"   default="/vision_stack/uav_2_drones_visualization"/>
 
-    <node pkg="sesame_navigation" type="detect_drones.py" name="obstacle_drones_uav_2" output="screen">
-        <param name="body_frame"  type="string" value="$(arg body_frame)"/>
-        <param name="local_frame" type="string" value="$(arg local_frame)"/>
-        <param name="marker_size" type="double" value="$(arg maker_size)"/>
-        <param name="aruco_size"  type="int"    value="$(arg aruco_size)"/>
-        <rosparam param="marker_ids">
-            $(arg marker_ids)
-        </rosparam>
-        <rosparam param="drones_id_map">
-            $(arg drones_id_map)
-        </rosparam>
-        <param name="use_visualization" type="bool" value="$(arg use_visualization)"/> 
-        <param name="viz_marker_size" type="double" value="$(arg visualization_marker_size)"/>
+    <node pkg="sesame_navigation" type="detect_drones.py" name="detect_drones_uav_2" output="screen">
+        <param name="body_frame"        type="string" value="$(arg body_frame)"/>
+        <param name="local_frame"       type="string" value="$(arg local_frame)"/>
+        <param name="marker_size"       type="double" value="$(arg marker_size)"/>
+        <param name="aruco_size"        type="int"    value="$(arg aruco_size)"/>
+        <param name="drones_id_map"     type="string" value="$(arg drones_id_map)"/>
+        <param name="drones_color_map"  type="string" value="$(arg drones_color_map)"/>
+        <param name="use_visualization" type="bool"   value="$(arg use_visualization)"/> 
+        <param name="viz_marker_size"   type="double" value="$(arg visualization_marker_size)"/>
 
         <remap from="/camera/color/image_raw" to="$(arg camera_topic)"/>
         <remap from="/camera/color/camera_info" to="$(arg camera_info_topic)"/>

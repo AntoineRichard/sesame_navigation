@@ -1,6 +1,6 @@
 <launch>
     <arg name="drone_to_publish"            default="uav_1"/>
-    <arg name="marker_ids"                  default="[1, 2, 3, 4, 5, 6, 7, 8, 9]"/>
+    <arg name="drones_to_track"             default="['uav_1', 'uav_2', 'uav_3', 'uav_4', 'uav_5', 'uav_6', 'uav_7', 'uav_8', 'uav_9']"/>
     <arg name="drones_id_map"               default="{'uav_1':1 , 'uav_2':2, 'uav_3':3, 'uav_4':4, 'uav_5':5, 'uav_6':6, 'uav_7':7, 'uav_8':8, 'uav_9':9}"/>
     <arg name="pose_regex"                  default="^/uav_[1-9].*/local_position/pose_stamped$"/>
     <arg name="output_frame"                default="map"/>
@@ -29,17 +29,10 @@
         <param name="pose_regex"        type="string" value="$(arg pose_regex)"/>
         <param name="use_visualization" type="bool"   value="$(arg use_visualization)"/> 
         <param name="drone_to_publish"  type="string" value="$(arg drone_to_publish)"/>
-        <param name="marker_size"       type="double" value="$(arg visualization_marker_size)"/>
-
-        <rosparam param="drones_id_map">
-            $(arg marker_ids)
-        </rosparam>
-        <rosparam param="drones_to_track">
-            $(arg drones_id_map)
-        </rosparam>
-        <rosparam param="drones_color_map">
-            $(arg drones_color_map)
-        </rosparam>
+        <param name="marker_size"       type="double" value="$(arg visualization_marker_size)"/> 
+        <param name="drones_id_map"     type="string" value="$(arg drones_id_map)"/>
+        <param name="drones_color_map"  type="string" value="$(arg drones_color_map)"/>
+        <param name="drones_to_track"   type="string" value="$(arg drones_to_track)"/>
 
         <remap from="input_drones"     to="$(arg in_drones_topic)"/>
         <remap from="output_drones"    to="$(arg out_drones_topic)"/>

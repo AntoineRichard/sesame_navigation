@@ -98,3 +98,9 @@ class SafetySwitch:
             + (true_pose.pose.position.y - est_pose.pose.position.y) ** 2
             + (true_pose.pose.position.z - est_pose.pose.position.z) ** 2
         ) ** 0.5
+
+
+if __name__ == "__main__":
+    rospy.init_node("safety_switch", anonymous=True)
+    ss = SafetySwitch()
+    rospy.spin()

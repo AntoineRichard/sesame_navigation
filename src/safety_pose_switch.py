@@ -5,14 +5,21 @@ import rospy
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import Bool
 
+import tf2_ros
+import tf2_geometry_msgs
+
 
 class SafetySwitch:
     def __init__(self):
         self.max_error_ = rospy.get_param("~max_error", 0.5)
+        self.global_frame_ = rospy.get_param("~global_frame", "map")
         self.use_estimated_pose_ = False
 
         self.true_pose_ = None
         self.est_pose_ = None
+
+        self.tf_buffer_ = tf2_ros.Buffer(rospy.Duration(100.0))
+        self.tf_listener_ = tf2_ros.TransformListener(self.tf_buffer_)
 
         true_pose_sub_ = rospy.Subscriber(
             "true_pose", PoseStamped, self.true_pose_callback, queue_size=1
@@ -80,6 +87,12 @@ class SafetySwitch:
         Returns:
             float: The error between the true pose and the estimated pose.
         """
+        transform = self.tf_buffer_.lookup_transform(
+            self.global_frame_, true_pose.header.frame_id, rospy.Time(0)
+        )
+        true_pose = tf2_geometry_msgs.do_transform_pose(true_pose, transform)
+        est_pose = tf2_geometry_msgs.do_transform_pose(est_pose, transform)
+
         return (
             (true_pose.pose.position.x - est_pose.pose.position.x) ** 2
             + (true_pose.pose.position.y - est_pose.pose.position.y) ** 2

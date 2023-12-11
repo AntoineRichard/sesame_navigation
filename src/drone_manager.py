@@ -30,49 +30,55 @@ class DroneManager:
         self.pose_regex_ = rospy.get_param(
             "~pose_regex", "^/uav_[1-9].*/local_position/pose_stamped$"
         )
-        self.color_map_ = rospy.get_param(
-            "~drones_color_map",
-            {
-                "uav_1": hsv_to_rgb(0.0, 1, 1),
-                "uav_2": hsv_to_rgb(0.5, 1, 1),
-                "uav_3": hsv_to_rgb(0.1, 1, 1),
-                "uav_4": hsv_to_rgb(0.6, 1, 1),
-                "uav_5": hsv_to_rgb(0.2, 1, 1),
-                "uav_6": hsv_to_rgb(0.7, 1, 1),
-                "uav_7": hsv_to_rgb(0.3, 1, 1),
-                "uav_8": hsv_to_rgb(0.8, 1, 1),
-                "uav_9": hsv_to_rgb(0.4, 1, 1),
-            },
+        self.color_map_ = eval(
+            rospy.get_param(
+                "~drones_color_map",
+                "{\
+                'uav_1': hsv_to_rgb(0.0, 1, 1),\
+                'uav_2': hsv_to_rgb(0.5, 1, 1),\
+                'uav_3': hsv_to_rgb(0.1, 1, 1),\
+                'uav_4': hsv_to_rgb(0.6, 1, 1),\
+                'uav_5': hsv_to_rgb(0.2, 1, 1),\
+                'uav_6': hsv_to_rgb(0.7, 1, 1),\
+                'uav_7': hsv_to_rgb(0.3, 1, 1),\
+                'uav_8': hsv_to_rgb(0.8, 1, 1),\
+                'uav_9': hsv_to_rgb(0.4, 1, 1),\
+            }",
+            )
         )
         self.marker_size_ = rospy.get_param("~marker_size", 0.25)
         self.use_visualization_ = rospy.get_param("~use_visualization", False)
-        self.drones_to_track_ = rospy.get_param(
-            "~drones_to_track",
-            [
-                "uav_1",
-                "uav_2",
-                "uav_3",
-                "uav_4",
-                "uav_5",
-                "uav_6",
-                "uav_7",
-                "uav_8",
-                "uav_9",
-            ],
+        self.drones_to_track_ = eval(
+            rospy.get_param(
+                "~drones_to_track",
+                "[\
+                'uav_1',\
+                'uav_2',\
+                'uav_3',\
+                'uav_4',\
+                'uav_5',\
+                'uav_6',\
+                'uav_7',\
+                'uav_8',\
+                'uav_9',\
+            ]",
+            )
         )
-        self.drones_id_map_ = rospy.get_param(
-            "~drones_id_map",
-            {
-                "uav_1": 1,
-                "uav_2": 2,
-                "uav_3": 3,
-                "uav_4": 4,
-                "uav_5": 5,
-                "uav_6": 6,
-                "uav_7": 7,
-                "uav_8": 8,
-                "uav_9": 9,
-            },
+        self.drones_id_map_ = eval(
+            rospy.get_param(
+                "~drones_id_map",
+                "{\
+                'uav_1': 1,\
+                'uav_2': 2,\
+                'uav_3': 3,\
+                'uav_4': 4,\
+                'uav_5': 5,\
+                'uav_6': 6,\
+                'uav_7': 7,\
+                'uav_8': 8,\
+                'uav_9': 9,\
+            }",
+            )
         )
         self.inv_drones_id_map_ = {v: k for k, v in self.drones_id_map_.items()}
         self.tracked_drones_ = {drone: None for drone in self.drones_to_track_}
@@ -171,11 +177,20 @@ class DroneManager:
         Publishes the position of the drone as a point stamped message.
         """
 
-        point = PointStamped()
-        point.header.stamp = rospy.Time.now()
-        point.header.frame_id = self.output_frame_
-        point.point = self.tracked_drones_[self.drone_to_publish_]["position"]
-        self.single_drone_point_pub_.publish(point)
+        if (self.drone_to_publish_ in self.tracked_drones_.keys()) and (
+            not self.tracked_drones_[self.drone_to_publish_] is None
+        ):
+            point = PointStamped()
+            point.header.stamp = rospy.Time.now()
+            point.header.frame_id = self.output_frame_
+            point.point = self.tracked_drones_[self.drone_to_publish_]["position"]
+            self.single_drone_point_pub_.publish(point)
+        else:
+            rospy.logwarn(
+                "Requested position of {}, but no position is available yet for this target.".format(
+                    self.drone_to_publish_
+                )
+            )
 
     def dronesCallback(self, msg: PointIdArray):
         """
@@ -256,7 +271,9 @@ class DroneManager:
 
         drone_name = msg.header.frame_id.split("/")[0]
         # Always update the position of the drone
-        if drone_name in self.drones_to_track_:
+        if (drone_name in self.drones_to_track_) and (
+            not drone_name in self.disabled_drones_
+        ):
             self.tracked_drones_[drone_name] = {
                 "vision": False,
                 "position": local_pose.pose.position,

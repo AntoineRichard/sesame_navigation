@@ -40,33 +40,37 @@ class DetectArucoDrones:
 
         self.use_visualization_ = rospy.get_param("~use_visualization", False)
         self.viz_marker_size_ = rospy.get_param("~viz_marker_size", 0.25)
-        self.color_map_ = rospy.get_param(
-            "~drones_color_map",
-            {
-                "uav_1": hsv_to_rgb(0.0, 1, 1),
-                "uav_2": hsv_to_rgb(0.5, 1, 1),
-                "uav_3": hsv_to_rgb(0.1, 1, 1),
-                "uav_4": hsv_to_rgb(0.6, 1, 1),
-                "uav_5": hsv_to_rgb(0.2, 1, 1),
-                "uav_6": hsv_to_rgb(0.7, 1, 1),
-                "uav_7": hsv_to_rgb(0.3, 1, 1),
-                "uav_8": hsv_to_rgb(0.8, 1, 1),
-                "uav_9": hsv_to_rgb(0.4, 1, 1),
-            },
+        self.color_map_ = eval(
+            rospy.get_param(
+                "~drones_color_map",
+                "{\
+                'uav_1': hsv_to_rgb(0.0, 1, 1),\
+                'uav_2': hsv_to_rgb(0.5, 1, 1),\
+                'uav_3': hsv_to_rgb(0.1, 1, 1),\
+                'uav_4': hsv_to_rgb(0.6, 1, 1),\
+                'uav_5': hsv_to_rgb(0.2, 1, 1),\
+                'uav_6': hsv_to_rgb(0.7, 1, 1),\
+                'uav_7': hsv_to_rgb(0.3, 1, 1),\
+                'uav_8': hsv_to_rgb(0.8, 1, 1),\
+                'uav_9': hsv_to_rgb(0.4, 1, 1),\
+            }",
+            )
         )
-        self.drones_id_map_ = rospy.get_param(
-            "~drones_id_map",
-            {
-                "uav_1": 1,
-                "uav_2": 2,
-                "uav_3": 3,
-                "uav_4": 4,
-                "uav_5": 5,
-                "uav_6": 6,
-                "uav_7": 7,
-                "uav_8": 8,
-                "uav_9": 9,
-            },
+        self.drones_id_map_ = eval(
+            rospy.get_param(
+                "~drones_id_map",
+                "{\
+                'uav_1': 1,\
+                'uav_2': 2,\
+                'uav_3': 3,\
+                'uav_4': 4,\
+                'uav_5': 5,\
+                'uav_6': 6,\
+                'uav_7': 7,\
+                'uav_8': 8,\
+                'uav_9': 9,\
+            }",
+            )
         )
         self.inv_drones_id_map_ = {v: k for k, v in self.drones_id_map_.items()}
 

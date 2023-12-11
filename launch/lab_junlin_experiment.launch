@@ -1,0 +1,60 @@
+<launch>
+    <!-- Drone detection arguments -->
+    <arg name="global_frame"      default="map"/>
+    <arg name="uav_2_body_frame"  default="uav_2/base_link"/>
+    <arg name="uav_2_local_frame" default="uav_2/odom"/>
+    <arg name="pose_regex"        default="^/uav_[1-9].*/local_position/pose_stamped$"/>
+    <arg name="drones_id_map"     default="{'uav_1':1 , 'uav_2':2, 'uav_3':3, 'uav_4':4, 'uav_5':5, 'uav_6':6, 'uav_7':7, 'uav_8':8, 'uav_9':9}"/>
+    <arg name="marker_ids"        default="[1, 2, 3, 4, 5, 6, 7, 8, 9]"/>
+    <arg name="uav_1_marker_size" default="0.12"/>
+    <arg name="drone_to_publish"  default="uav_1"/>
+
+    <arg name="uav_2_camera_topic"                  default="/uav_2/camera/color/image_raw"/>
+    <arg name="uav_2_camera_info_topic"             default="/uav_2/camera/color/camera_info"/>
+    <arg name="detected_drones_topic"               default="/vision_stack/drones"/>
+    <arg name="detected_drones_visualization_topic" default="/vision_stack/uav_2_drones_visualization"/>
+    <arg name="managed_drones_topic"                default="/vision_stack/filtered_drones"/>
+    <arg name="managed_drones_visualization_topic"  default="/vision_stack/drones_visualization"/>
+    <arg name="disable_drone_topic"                 default="/vision_stack/disable_drone_tracking_by_name"/>
+    <arg name="enable_drone_topic"                  default="/vision_stack/enable_drone_tracking_by_name"/>
+    <arg name="request_drone_topic"                 default="/vision_stack/request_drone_position_by_name"/>
+
+    <!-- Visualization arguments -->
+    <arg name="use_visualization"         default="true"/>
+    <arg name="detect_drone_marker_size"  default="0.25">
+    <arg name="manager_drone_marker_size" default="0.25">
+
+    <!-- Safety arguments -->
+
+    <!-- Drone detection stack -->
+    <include file="$(find sesame_navigation)/launch/includes/vision/detect_drones_uav_2.launch">
+        <arg name="body_frame"                value="$(arg uav_2_body_frame)"/>
+        <arg name="local_frame"               value="$(arg uav_2_local_frame)"/>
+        <arg name="marker_size"               value="$(arg uav_1_marker_size)"/>
+        <arg name="marker_ids"                value="$(arg marker_ids)"/>
+        <arg name="drones_id_map"             value="$(arg drones_id_map)"/>
+        <arg name="use_visualization"         value="$(arg use_visualization)"/>
+        <arg name="visualization_marker_size" value="$(arg detect_drone_marker_size)">
+
+        <arg name="camera_topic"      value="$(arg uav_2_camera_topic)"/>
+        <arg name="camera_info_topic" value="$(arg uav_2_camera_info_topic)"/>
+        <arg name="drones_topic"      value="$(arg detected_drones_topic)"/>
+        <arg name="drone_viz_topic"   value="$(arg detected_drones_visualization_topic)"/>
+    </include>
+
+    <include file="$(find sesame_navigation)/launch/includes/vision/drones_manager.launch">
+        <arg name="drone_to_publish"          value="$(arg drone_to_publish)"/>
+        <arg name="marker_ids"                value="$(arg marker_ids)"/>
+        <arg name="drones_id_map"             value="$(arg drones_id_map)"/>
+        <arg name="pose_regex"                value="$(arg pose_regex)"/>
+        <arg name="output_frame"              value="$(arg global_frame)"/>
+        <arg name="use_visualization"         value="$(arg use_visualization)"/>
+        <arg name="visualization_marker_size" value="$(arg manager_drone_marker_size)">
+
+        <arg name="in_drones_topic"  value="$(arg detected_drones_topic)"/>
+        <arg name="out_drones_topic" value="$(arg managed_drones_topic)"/>
+        <arg name="viz_topic"        value="$(arg managed_drones_visualization_topic)"/>
+    </include>
+
+    <!-- Safety -->
+</launch>

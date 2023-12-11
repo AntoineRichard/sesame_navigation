@@ -23,8 +23,6 @@ class DroneManager:
 
     def __init__(self):
         self.publish_rate_ = rospy.get_param("~publish_rate", 10.0)
-        self.obstacle_radius_ = rospy.get_param("~obstacle_radius", 2.5)
-        self.obstacle_epsilon_ = rospy.get_param("~obstacle_epsilon", 0.25)
         self.output_frame_ = rospy.get_param("~output_frame", "map")
         self.drone_to_publish_ = rospy.get_param("~drone_to_publish", "uav_1")
         self.disabled_drones_ = []
@@ -104,7 +102,7 @@ class DroneManager:
             "enable_drone", String, self.enableDroneCallback
         )
         self.request_drone_id_sub = rospy.Subscriber(
-            "request_drone_id", Int32, self.requestDroneIdCallback
+            "request_drone_id", String, self.requestDroneIdCallback
         )
 
         self.single_drone_point_pub_ = rospy.Publisher(
@@ -149,7 +147,7 @@ class DroneManager:
         else:
             rospy.logwarn("Drone {} already enabled".format(msg.data))
 
-    def requestDroneIdCallback(self, msg: Int32) -> None:
+    def requestDroneIdCallback(self, msg: String) -> None:
         """
         Callback function for the request_drone_id subscriber. It tells the node
         which drone to output as a point stamped message.
@@ -158,7 +156,15 @@ class DroneManager:
             msg (Int32): Int32 message containing the ID of the drone to disable.
         """
 
-        self.drone_to_publish_ = self.inv_drones_id_map_[msg.data]
+        if msg.data in self.drones_to_track_:
+            self.drone_to_publish_ = msg.data
+            rospy.loginfo("Now outputing the position of drone {}.".format(msg.data))
+        else:
+            rospy.logwarn(
+                "Drone {} is not in the list of trackable drones. Ignoring.".format(
+                    msg.data
+                )
+            )
 
     def publishSingleDronePoint(self) -> None:
         """

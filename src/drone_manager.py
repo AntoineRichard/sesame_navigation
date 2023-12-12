@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-import numpy as np
-import copy
 import re
 
 import rospy
@@ -11,7 +9,7 @@ import tf2_geometry_msgs
 from geometry_msgs.msg import PoseStamped, PointStamped
 from sesame_navigation.msg import PointId, PointIdArray
 from visualization_msgs.msg import Marker, MarkerArray
-from std_msgs.msg import Int32, String
+from std_msgs.msg import String
 from colorsys import hsv_to_rgb
 
 

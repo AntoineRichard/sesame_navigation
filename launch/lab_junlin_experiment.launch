@@ -5,7 +5,7 @@
     <arg name="uav_2_local_frame" default="uav_2/odom"/>
     <arg name="pose_regex"        default="^/uav_[1-9].*/local_position/pose_stamped$"/>
     <arg name="drones_id_map"     default="{'uav_1':1 , 'uav_2':2, 'uav_3':3, 'uav_4':4, 'uav_5':5, 'uav_6':6, 'uav_7':7, 'uav_8':8, 'uav_9':9}"/>
-    <arg name="marker_ids"        default="[1, 2, 3, 4, 5, 6, 7, 8, 9]"/>
+    <arg name="drones_to_track"   default="['uav_1', 'uav_2', 'uav_3', 'uav_4', 'uav_5', 'uav_6', 'uav_7', 'uav_8', 'uav_9']"/>
     <arg name="uav_1_marker_size" default="0.12"/>
     <arg name="drone_to_publish"  default="uav_1"/>
     <arg name="aruco_size"        default="4"/>
@@ -20,8 +20,8 @@
 
     <!-- Visualization arguments -->
     <arg name="use_visualization"         default="true"/>
-    <arg name="detect_drone_marker_size"  default="0.25">
-    <arg name="manager_drone_marker_size" default="0.25">
+    <arg name="detect_drone_marker_size"  default="0.25"/>
+    <arg name="manager_drone_marker_size" default="0.25"/>
     <arg name="drones_color_map"          default="{'uav_1': [1.00, 0.00, 0.00],
                                                     'uav_2': [0.00, 0.00, 1.00],
                                                     'uav_3': [0.75, 0.25, 0.00],
@@ -49,10 +49,9 @@
         <arg name="body_frame"                value="$(arg uav_2_body_frame)"/>
         <arg name="local_frame"               value="$(arg uav_2_local_frame)"/>
         <arg name="marker_size"               value="$(arg uav_1_marker_size)"/>
-        <arg name="marker_ids"                value="$(arg marker_ids)"/>
         <arg name="drones_id_map"             value="$(arg drones_id_map)"/>
         <arg name="use_visualization"         value="$(arg use_visualization)"/>
-        <arg name="visualization_marker_size" value="$(arg detect_drone_marker_size)">
+        <arg name="visualization_marker_size" value="$(arg detect_drone_marker_size)"/>
         <arg name="aruco_size"                value="$(arg aruco_size)"/>
         <arg name="drones_color_map"          value="$(arg drones_color_map)"/>
 
@@ -62,14 +61,14 @@
         <arg name="drone_viz_topic"   value="$(arg detected_drones_visualization_topic)"/>
     </include>
 
-    <include file="$(find sesame_navigation)/launch/includes/vision/drones_manager.launch">
+    <include file="$(find sesame_navigation)/launch/includes/vision/drone_manager.launch">
         <arg name="drone_to_publish"          value="$(arg drone_to_publish)"/>
-        <arg name="marker_ids"                value="$(arg marker_ids)"/>
+        <arg name="drones_to_track"           value="$(arg drones_to_track)"/>
         <arg name="drones_id_map"             value="$(arg drones_id_map)"/>
         <arg name="pose_regex"                value="$(arg pose_regex)"/>
         <arg name="output_frame"              value="$(arg global_frame)"/>
         <arg name="use_visualization"         value="$(arg use_visualization)"/>
-        <arg name="visualization_marker_size" value="$(arg manager_drone_marker_size)">
+        <arg name="visualization_marker_size" value="$(arg manager_drone_marker_size)"/>
         <arg name="drones_color_map"          value="$(arg drones_color_map)"/>
 
         <arg name="in_drones_topic"  value="$(arg detected_drones_topic)"/>

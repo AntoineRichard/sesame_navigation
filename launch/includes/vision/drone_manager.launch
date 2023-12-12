@@ -4,7 +4,7 @@
     <arg name="drones_id_map"               default="{'uav_1':1 , 'uav_2':2, 'uav_3':3, 'uav_4':4, 'uav_5':5, 'uav_6':6, 'uav_7':7, 'uav_8':8, 'uav_9':9}"/>
     <arg name="pose_regex"                  default="^/uav_[1-9].*/local_position/pose_stamped$"/>
     <arg name="output_frame"                default="map"/>
-    <arg name="use_visualization"           default="false"/>
+    <arg name="use_visualization"           default="true"/>
     <arg name="visualization_marker_size"   default="0.25"/>
     <arg name="drones_color_map"            default="{'uav_1': [1.00, 0.00, 0.00],
                                                       'uav_2': [0.00, 0.00, 1.00],

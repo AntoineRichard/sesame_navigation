@@ -35,6 +35,6 @@
         <remap from="/camera/color/image_raw" to="$(arg camera_topic)"/>
         <remap from="/camera/color/camera_info" to="$(arg camera_info_topic)"/>
         <remap from="drones" to="$(arg drones_topic)"/>
-        <remap from="drone_viz" to="$(arg drone_viz_topic)"/>
+        <remap from="drones_viz" to="$(arg drone_viz_topic)"/>
     </node>
 </launch>

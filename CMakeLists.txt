@@ -3,9 +3,16 @@ project(sesame_navigation)
 
 find_package(catkin REQUIRED COMPONENTS
 	geometry_msgs
+	mavros_msgs
+	mavros
+	tf2_ros
+	tf2_msgs
+	tf2_geometry_msgs
 	nav_msgs
 	rospy
 	std_msgs
+	geographic_msgs
+	visualization_msgs
 	message_generation
 )
 

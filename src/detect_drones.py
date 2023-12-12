@@ -134,6 +134,10 @@ class DetectArucoDrones:
             msg (Image): Image message containing the image from the camera.
         """
 
+        if self.camera_info_ is None:
+            rospy.logwarn("No camera info received yet, skipping frame.")
+            return
+
         self.image_ = msg
         rgb = self.bridge_.imgmsg_to_cv2(self.image_, "bgr8")
         (corners, ids, rejected) = self.detector_.detectMarkers(rgb)

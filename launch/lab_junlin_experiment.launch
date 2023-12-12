@@ -1,17 +1,17 @@
 <launch>
     <!-- Drone detection arguments -->
     <arg name="global_frame"      default="map"/>
-    <arg name="uav_2_body_frame"  default="uav_2/base_link"/>
-    <arg name="uav_2_local_frame" default="uav_2/odom"/>
-    <arg name="pose_regex"        default="^/uav_[1-9].*/local_position/pose_stamped$"/>
-    <arg name="drones_id_map"     default="{'uav_1':1 , 'uav_2':2, 'uav_3':3, 'uav_4':4, 'uav_5':5, 'uav_6':6, 'uav_7':7, 'uav_8':8, 'uav_9':9}"/>
-    <arg name="drones_to_track"   default="['uav_1', 'uav_2', 'uav_3', 'uav_4', 'uav_5', 'uav_6', 'uav_7', 'uav_8', 'uav_9']"/>
+    <arg name="uav_2_body_frame"  default="uav_b/base_link"/>
+    <arg name="uav_2_local_frame" default="uav_b/odom"/>
+    <arg name="pose_regex"        default="^/uav_[a-b].*/local_position/pose$"/>
+    <arg name="drones_id_map"     default="{'uav_a':1 , 'uav_b':2}"/>
+    <arg name="drones_to_track"   default="['uav_a', 'uav_b']"/>
     <arg name="uav_1_marker_size" default="0.12"/>
-    <arg name="drone_to_publish"  default="uav_1"/>
+    <arg name="drone_to_publish"  default="uav_a"/>
     <arg name="aruco_size"        default="4"/>
 
-    <arg name="uav_2_camera_topic"      default="/uav_2/camera/color/image_raw"/>
-    <arg name="uav_2_camera_info_topic" default="/uav_2/camera/color/camera_info"/>
+    <arg name="uav_2_camera_topic"      default="/uav_b/camera/color/image_raw"/>
+    <arg name="uav_2_camera_info_topic" default="/uav_b/camera/color/camera_info"/>
     <arg name="detected_drones_topic"   default="/vision_stack/drones"/>
     <arg name="managed_drones_topic"    default="/vision_stack/filtered_drones"/>
     <arg name="disable_drone_topic"     default="/vision_stack/disable_drone_tracking_by_name"/>
@@ -33,16 +33,16 @@
                                                     'uav_9': [0.00, 1.00, 0.00],
                                                     }"/>
 
-    <arg name="detected_drones_visualization_topic" default="/vision_stack/uav_2_drones_visualization"/>
+    <arg name="detected_drones_visualization_topic" default="/vision_stack/uav_b_drones_visualization"/>
     <arg name="managed_drones_visualization_topic"  default="/vision_stack/drones_visualization"/>
 
     <!-- Safety arguments -->
     <arg name="max_error"            default="0.5"/>
 
-    <arg name="true_pose_topic"      default="/vrpn/uav_1"/>
+    <arg name="true_pose_topic"      default="/vrpn/uav_a"/>
     <arg name="estimated_pose_topic" default="/sensor_fusion/fused"/>
     <arg name="switch_topic"         default="/switches/enable_estimated_position"/>
-    <arg name="output_topic"         default="/uav_1/mavros/vision_pose"/>
+    <arg name="output_topic"         default="/uav_a/mavros/vision_pose"/>
 
     <!-- Drone detection stack -->
     <include file="$(find sesame_navigation)/launch/includes/vision/detect_drones_uav_2.launch">

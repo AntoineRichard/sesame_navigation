@@ -1,0 +1,50 @@
+
+<launch>
+    <!-- Drone detection arguments -->
+    <arg name="global_frame"      default="map"/>
+    <arg name="body_frame"        default="d455_color_optical_frame"/>
+    <arg name="local_frame"       default="d455_color_optical_frame"/>
+    <arg name="pose_regex"        default="^/uav_[a-b].*/local_position/pose$"/>
+    <arg name="drones_id_map"     default="{'uav_a':1 , 'uav_b':2}"/>
+    <arg name="drones_to_track"   default="['uav_a', 'uav_b']"/>
+    <arg name="uav_1_marker_size" default="0.12"/>
+    <arg name="drone_to_publish"  default="uav_a"/>
+    <arg name="aruco_size"        default="4"/>
+
+    <arg name="camera_topic"          default="/d455/color/image_raw"/>
+    <arg name="camera_info_topic"     default="/d455/color/camera_info"/>
+    <arg name="detected_drones_topic" default="/vision_stack/drones"/>
+
+    <!-- Visualization arguments -->
+    <arg name="use_visualization"         default="true"/>
+    <arg name="detect_drone_marker_size"  default="0.25"/>
+    <arg name="drones_color_map"          default="{'uav_1': [1.00, 0.00, 0.00],
+                                                    'uav_2': [0.00, 0.00, 1.00],
+                                                    'uav_3': [0.75, 0.25, 0.00],
+                                                    'uav_4': [0.00, 0.25, 0.75],
+                                                    'uav_5': [0.50, 0.50, 0.00],
+                                                    'uav_6': [0.00, 0.50, 0.50],
+                                                    'uav_7': [0.25, 0.75, 0.00],
+                                                    'uav_8': [0.00, 0.75, 0.25],
+                                                    'uav_9': [0.00, 1.00, 0.00],
+                                                    }"/>
+
+    <arg name="detected_drones_visualization_topic" default="/vision_stack/uav_b_drones_visualization"/>
+
+    <!-- Drone detection stack -->
+    <include file="$(find sesame_navigation)/launch/includes/vision/detect_drones_uav_2.launch">
+        <arg name="body_frame"                value="$(arg body_frame)"/>
+        <arg name="local_frame"               value="$(arg local_frame)"/>
+        <arg name="marker_size"               value="$(arg uav_1_marker_size)"/>
+        <arg name="drones_id_map"             value="$(arg drones_id_map)"/>
+        <arg name="use_visualization"         value="$(arg use_visualization)"/>
+        <arg name="visualization_marker_size" value="$(arg detect_drone_marker_size)"/>
+        <arg name="aruco_size"                value="$(arg aruco_size)"/>
+        <arg name="drones_color_map"          value="$(arg drones_color_map)"/>
+
+        <arg name="camera_topic"      value="$(arg camera_topic)"/>
+        <arg name="camera_info_topic" value="$(arg camera_info_topic)"/>
+        <arg name="drones_topic"      value="$(arg detected_drones_topic)"/>
+        <arg name="drone_viz_topic"   value="$(arg detected_drones_visualization_topic)"/>
+    </include>
+</launch>

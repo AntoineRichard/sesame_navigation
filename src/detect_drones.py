@@ -35,7 +35,7 @@ class DetectArucoDrones:
         self.body_frame_ = rospy.get_param("~body_frame", "uav_2/base_link")
         self.local_frame_ = rospy.get_param("~local_frame", "uav_2/odom")
         self.marker_size_ = rospy.get_param("~marker_size", 0.15)
-        self.marker_id_ = rospy.get_param("~markers_id", [1, 2])
+        self.markers_id_ = eval(rospy.get_param("~markers_id", "[1, 2]"))
         self.aruco_size_ = rospy.get_param("~aruco_size", 5)
 
         self.use_visualization_ = rospy.get_param("~use_visualization", False)
@@ -147,7 +147,7 @@ class DetectArucoDrones:
             self.pose_array.header = copy.copy(self.image_.header)
             self.pose_array.header.frame_id = self.local_frame_
             for i, corner in enumerate(corners):
-                if ids[i] in self.marker_id_:
+                if ids[i] in self.markers_id_:
                     cv_pose = self.getPoseFromCorners(corner)
                     local_point_id, keep = self.transformPoseToLocalFrame(cv_pose)
                     if keep:

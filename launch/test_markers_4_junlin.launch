@@ -5,10 +5,10 @@
     <arg name="body_frame"        default="d455_color_optical_frame"/>
     <arg name="local_frame"       default="d455_color_optical_frame"/>
     <arg name="pose_regex"        default="^/uav_[a-b].*/local_position/pose$"/>
-    <arg name="drones_id_map"     default="{'uav_a':1 , 'uav_b':2}"/>
+    <arg name="markers_id"        default="[0, 1]"/>
+    <arg name="drones_id_map"     default="{'uav_a':0 , 'uav_b':1}"/>
     <arg name="drones_to_track"   default="['uav_a', 'uav_b']"/>
     <arg name="uav_1_marker_size" default="0.12"/>
-    <arg name="drone_to_publish"  default="uav_a"/>
     <arg name="aruco_size"        default="4"/>
 
     <arg name="camera_topic"          default="/d455/color/image_raw"/>
@@ -29,6 +29,7 @@
         <arg name="body_frame"                value="$(arg body_frame)"/>
         <arg name="local_frame"               value="$(arg local_frame)"/>
         <arg name="marker_size"               value="$(arg uav_1_marker_size)"/>
+        <arg name="markers_id"                value="$(arg markers_id)"/>
         <arg name="drones_id_map"             value="$(arg drones_id_map)"/>
         <arg name="use_visualization"         value="$(arg use_visualization)"/>
         <arg name="visualization_marker_size" value="$(arg detect_drone_marker_size)"/>

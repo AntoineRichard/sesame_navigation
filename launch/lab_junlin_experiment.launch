@@ -4,7 +4,8 @@
     <arg name="uav_2_body_frame"  default="uav_b/base_link"/>
     <arg name="uav_2_local_frame" default="uav_b/odom"/>
     <arg name="pose_regex"        default="^/uav_[a-b].*/local_position/pose$"/>
-    <arg name="drones_id_map"     default="{'uav_a':1 , 'uav_b':2}"/>
+    <arg name="drones_id_map"     default="{'uav_a':0 , 'uav_b':1}"/>
+    <arg name="markers_id"        default="[0, 1]"/>
     <arg name="drones_to_track"   default="['uav_a', 'uav_b']"/>
     <arg name="uav_1_marker_size" default="0.12"/>
     <arg name="drone_to_publish"  default="uav_a"/>
@@ -22,15 +23,8 @@
     <arg name="use_visualization"         default="true"/>
     <arg name="detect_drone_marker_size"  default="0.25"/>
     <arg name="manager_drone_marker_size" default="0.25"/>
-    <arg name="drones_color_map"          default="{'uav_1': [1.00, 0.00, 0.00],
-                                                    'uav_2': [0.00, 0.00, 1.00],
-                                                    'uav_3': [0.75, 0.25, 0.00],
-                                                    'uav_4': [0.00, 0.25, 0.75],
-                                                    'uav_5': [0.50, 0.50, 0.00],
-                                                    'uav_6': [0.00, 0.50, 0.50],
-                                                    'uav_7': [0.25, 0.75, 0.00],
-                                                    'uav_8': [0.00, 0.75, 0.25],
-                                                    'uav_9': [0.00, 1.00, 0.00],
+    <arg name="drones_color_map"          default="{'uav_a': [1.00, 0.00, 0.00],
+                                                    'uav_b': [0.00, 0.00, 1.00],
                                                     }"/>
 
     <arg name="detected_drones_visualization_topic" default="/vision_stack/uav_b_drones_visualization"/>

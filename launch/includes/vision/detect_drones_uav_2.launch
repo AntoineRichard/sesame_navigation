@@ -2,6 +2,7 @@
     <arg name="body_frame"                  default="uav_2/base_link"/>
     <arg name="local_frame"                 default="uav_2/odom"/>
     <arg name="marker_size"                 default="0.15"/>
+    <arg name="markers_id"                  default="[1, 2, 3 ,4, 5, 6, 7, 8, 9]"/>
     <arg name="drones_id_map"               default="{'uav_1':1 , 'uav_2':2, 'uav_3':3, 'uav_4':4, 'uav_5':5, 'uav_6':6, 'uav_7':7, 'uav_8':8, 'uav_9':9}"/>
     <arg name="use_visualization"           default="true"/>
     <arg name="visualization_marker_size"   default="0.25"/>
@@ -27,6 +28,7 @@
         <param name="local_frame"       type="string" value="$(arg local_frame)"/>
         <param name="marker_size"       type="double" value="$(arg marker_size)"/>
         <param name="aruco_size"        type="int"    value="$(arg aruco_size)"/>
+        <param name="markers_id"        type="string" value="$(arg markers_id)"/>
         <param name="drones_id_map"     type="string" value="$(arg drones_id_map)"/>
         <param name="drones_color_map"  type="string" value="$(arg drones_color_map)"/>
         <param name="use_visualization" type="bool"   value="$(arg use_visualization)"/> 

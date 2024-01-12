@@ -118,6 +118,7 @@ class SprayingUAVPlanner:
         self.w_goal_ = rospy.get_param("~goal_weight", 5.0)
         self.w_obstacle_ = rospy.get_param("~obstacle_weight", -7.5)
         self.altitude_offset_ = rospy.get_param("~altitude_offset", 0.5)
+        self.uav_name = rospy.get_param("~uav_name", "uav_1")
 
         # Controllers
         self.use_position_control_ = rospy.get_param("~use_position_control", True)
@@ -227,8 +228,11 @@ class SprayingUAVPlanner:
         Arms the UAV.
         """
 
-        rospy.wait_for_service("/uav_1/mavros/cmd/arming")
-        arm = rospy.ServiceProxy("/uav_1/mavros/cmd/arming", CommandBool)
+        rospy.wait_for_service("/" + self.uav_name + "/mavros/cmd/arming")
+        print(self.uav_name)
+        arm = rospy.ServiceProxy(
+            "/" + self.uav_name + "/mavros/cmd/arming", CommandBool
+        )
         arm_req = CommandBoolRequest()
         arm_req.value = True
         arm(arm_req)
@@ -239,8 +243,10 @@ class SprayingUAVPlanner:
         Disarms the UAV.
         """
 
-        rospy.wait_for_service("/uav_1/mavros/cmd/arming")
-        arm = rospy.ServiceProxy("/uav_1/mavros/cmd/arming", CommandBool)
+        rospy.wait_for_service("/" + self.uav_name + "/mavros/cmd/arming")
+        arm = rospy.ServiceProxy(
+            "/" + self.uav_name + "/mavros/cmd/arming", CommandBool
+        )
         arm_req = CommandBoolRequest()
         arm_req.value = False
         arm(arm_req)
@@ -252,8 +258,8 @@ class SprayingUAVPlanner:
         It allows us to send position and velocity commands to the UAV.
         """
 
-        rospy.wait_for_service("/uav_1/mavros/set_mode")
-        mode = rospy.ServiceProxy("/uav_1/mavros/set_mode", SetMode)
+        rospy.wait_for_service("/" + self.uav_name + "/mavros/set_mode")
+        mode = rospy.ServiceProxy("/" + self.uav_name + "/mavros/set_mode", SetMode)
         mode_req = SetModeRequest()
         mode_req.custom_mode = "OFFBOARD"
         mode(mode_req)
@@ -270,8 +276,8 @@ class SprayingUAVPlanner:
             z (float, optional): z coordinate of the landing position. Defaults to 0.
         """
 
-        rospy.wait_for_service("/uav_1/mavros/cmd/land")
-        land = rospy.ServiceProxy("/uav_1/mavros/cmd/land", CommandTOL)
+        rospy.wait_for_service("/" + self.uav_name + "/mavros/cmd/land")
+        land = rospy.ServiceProxy("/" + self.uav_name + "/mavros/cmd/land", CommandTOL)
         land_req = CommandTOLRequest()
         land_req.latitude = x
         land_req.longitude = y

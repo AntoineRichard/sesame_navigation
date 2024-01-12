@@ -31,6 +31,10 @@
         <remap from="drones" to="/vision_stack/filtered_drones"/>
         <!-- Obstacles Detection -->
         <remap from="obstacles" to="/vision_stack/filtered_obstacles"/>
+        <!-- Alarm >
+        <remap from="security_eddi" to="/eddi/security/obstacle_override"/>
+        <remap from="safety_eddi_gps" to="/eddi/safety/gps"/>
+        <remap from="safety_eddi_camera" to="/eddi/safety/camera"/-->
     </node>
 
     <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="traj_viz_uav_2" output="screen">

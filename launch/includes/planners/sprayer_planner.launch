@@ -24,13 +24,16 @@
         <remap from="/mavros/setpoint_velocity/cmd_vel" to="/uav_1/mavros/setpoint_velocity/cmd_vel"/>
         <!-- Visualization -->
         <param name="publish_visualization" type="bool" value="true"/>
-        <!--rosparam param="waypoints_color">[0.11, 0.43, 0.92]</rosparam-->
-        <!--rosparam param="waypoints_color_visited">[0.0, 0.0, 0.0]</rosparam-->
-        <!--rosparam param="waypoints_color_current">[0.0, 1.0, 0.0]</rosparam-->
-        <!--rosparam param="waypoints_color_unreachable">[1.0, 0.0, 0.0]</rosparam-->
+        <rosparam param="waypoints_color">[0.11, 0.43, 0.92]</rosparam>
+        <!--rosparam param="waypoints_color_visited">[0.0, 0.0, 0.0]</rosparam>
+        <rosparam param="waypoints_color_current">[0.0, 1.0, 0.0]</rosparam>
+        <rosparam param="waypoints_color_unreachable">[1.0, 0.0, 0.0]</rosparam-->
         <param name="waypoints_size" type="double" value="0.25"/>
-
         <remap from="waypoints_viz" to="/control_stack/uav_1_waypoints_visualization"/>
+        <!-- Alarm -->
+        <remap from="security_eddi" to="/eddi/security/obstacle_override"/>
+        <remap from="safety_eddi_gps" to="/eddi/safety/gps"/>
+        <remap from="safety_eddi_camera" to="/eddi/safety/camera"/>
     </node>
 
     <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="traj_viz_uav_1" output="screen">

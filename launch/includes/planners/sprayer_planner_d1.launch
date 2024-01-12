@@ -1,0 +1,49 @@
+<launch>
+    <node pkg="sesame_navigation" type="sprayer_uav_planner.py" name="sprayer_uav_planner" output="screen">
+        <!-- Heightmap settings -->
+        <param name="heightmap_mpp" type="double" value="0.1"/>
+        <param name="heightmap_min_altitude" type="double" value="150.0"/>
+        <param name="heightmap_origin_long" type="double" value="49.5381173342964"/>
+        <param name="heightmap_origin_lat" type="double" value="6.352911227620768"/>
+        <param name="waypoints_csv_path" type="string" value="/home/antoine/Digital_Vineyard_Rosenberg/vines_d1.csv"/>
+
+
+        <!-- Planner & Obstacle avoidance settings -->
+        <param name="waypoint_distance_threshold" type="double" value="0.25"/>
+        <param name="travel_dist" type="double" value="1.0"/>
+        <param name="goal_weight" type="double" value="5.0"/>
+        <param name="obstacle_weight" type="double" value="-7.5"/>
+        <param name="altitude_offset" type="double" value="0.5"/>
+        <param name="uav_name" type="string" value="uav_1"/>
+        <param name="local_frame" type="string" value="uav_1/odom"/>
+        <remap from="obstacles" to="/vision_stack/filtered_obstacle"/>
+
+        <!-- State Acquisition-->
+        <remap from="/mavros/global_position/global" to="/uav_1/mavros/global_position/global"/>
+        <remap from="/mavros/local_position/pose" to="/uav_1/mavros/local_position/pose"/>
+        <remap from="/mavros/altitude" to="/uav_1/mavros/altitude"/>
+        <remap from="/mavros/state" to="/uav_1/mavros/state"/>
+        <!-- Control -->
+        <remap from="/mavros/setpoint_position/local" to="/uav_1/mavros/setpoint_position/local"/>
+        <remap from="/mavros/setpoint_velocity/cmd_vel" to="/uav_1/mavros/setpoint_velocity/cmd_vel"/>
+        <!-- Visualization -->
+        <param name="publish_visualization" type="bool" value="true"/>
+        <rosparam param="waypoints_color">[0.11, 0.43, 0.92]</rosparam>
+        <!--rosparam param="waypoints_color_visited">[0.0, 0.0, 0.0]</rosparam>
+        <rosparam param="waypoints_color_current">[0.0, 1.0, 0.0]</rosparam>
+        <rosparam param="waypoints_color_unreachable">[1.0, 0.0, 0.0]</rosparam-->
+        <param name="waypoints_size" type="double" value="0.25"/>
+        <remap from="waypoints_viz" to="/control_stack/uav_1_waypoints_visualization"/>
+        <!-- Alarm -->
+        <remap from="security_eddi" to="/eddi/security/obstacle_override"/>
+        <remap from="safety_eddi_gps" to="/eddi/safety/gps"/>
+        <remap from="safety_eddi_camera" to="/eddi/safety/camera"/>
+    </node>
+
+    <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="traj_viz_uav_1" output="screen">
+        <param name="target_frame_name" value="map"/>
+        <param name="source_frame_name" value="uav_1/base_link"/>
+        <param name="trajectory_update_rate" value="4.0"/>
+        <remap from="/trajectory" to="/control_stack/uav_1_trajectory_visualization"/>
+    </node>
+</launch>

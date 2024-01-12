@@ -154,6 +154,7 @@ class SprayingUAVPlanner:
         self.unreachable_ids_ = []
         self.current_id_ = 0
         self.waypoints_points_ = []
+        self.max_consecutive_points = rospy.get_param("~max_consecutive_points", 150)
 
         # Offsets and home coordinates
         self.offset_ = None
@@ -552,6 +553,9 @@ class SprayingUAVPlanner:
         self.way_points_xyz = self.convertWaypointsToMapFrame(lat, long, height)
         self.initializeUAV()
         self.way_points_xyz = self.castWaypointsToLocalFrame(self.way_points_xyz)
+        self.way_points_xyz = np.concatenate(
+            (self.way_points_xyz, np.array([[0, 0, 0]])), axis=0
+        )
         # Get the Heightmap and apply the offsets
         self.readHeightMap()
         self.getHMOffset()
@@ -935,12 +939,22 @@ class SprayingUAVPlanner:
         for i in range(3):
             self.buildWayPointsViz()
             rate.sleep()
+
+        num_consecutive_points = 0
+        refilling = False
+        prev_way_point_id = way_point_id
+
         while (not rospy.is_shutdown()) and (way_point_id < len(self.way_points_xyz)):
             self.lock_.acquire()
             if self.getDistanceToWayPoint(way_point_id) < self.d_threshold_:
                 rospy.loginfo("Way point reached")
                 self.updateReached(way_point_id)
-                way_point_id += 1
+                num_consecutive_points += 1
+                if refilling:
+                    refilling = False
+                    way_point_id = copy.deepcopy(prev_way_point_id)
+                else:
+                    way_point_id += 1
                 rospy.loginfo(
                     "Going to way point %.2f, %.2f"
                     % (
@@ -949,6 +963,15 @@ class SprayingUAVPlanner:
                     )
                 )
                 self.current_id_ = way_point_id
+
+            if self.max_consecutive_points <= num_consecutive_points:
+                prev_way_point_id = copy.deepcopy(way_point_id)
+                way_point_id = -1
+                refilling = True
+                rospy.logwarn("Going to refill tank and swap battery")
+                self.current_id_ = way_point_id
+                num_consecutive_points = 0
+
             if not self.isWayPointReachable(way_point_id):
                 rospy.logwarn("Way point is obstructed. Jumping to the next.")
                 self.updateUnreachable(way_point_id)
@@ -956,6 +979,7 @@ class SprayingUAVPlanner:
                 self.current_id_ = way_point_id
             else:
                 self.updateCurrent(way_point_id)
+
             self.pose_pub.publish(self.goToWayPoint(way_point_id))
             self.lock_.release()
             rate.sleep()

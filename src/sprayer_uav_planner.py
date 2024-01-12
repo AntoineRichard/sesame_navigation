@@ -175,6 +175,9 @@ class SprayingUAVPlanner:
         self.tf_buffer_ = tf2_ros.Buffer(rospy.Duration(100.0))
         self.tf_listener_ = tf2_ros.TransformListener(self.tf_buffer_)
 
+        # Safety
+        self.eddi_obs_ = False
+
         self.pose_pub = rospy.Publisher(
             "/mavros/setpoint_position/local", PoseStamped, queue_size=1
         )
@@ -207,6 +210,11 @@ class SprayingUAVPlanner:
             "waypoints_viz", MarkerArray, queue_size=1
         )
 
+        self.state_sub = rospy.Subscriber(
+            "/eddi/security/obstacle_override", Bool, self.eddiObsCallback
+        )
+        # <remap from="safety_eddi_gps" to="/eddi/safety/gps"/>
+        # <remap from="safety_eddi_camera" to="/eddi/safety/camera"/>
         self.buildWayPoints()
 
     # =============================================================================
@@ -420,6 +428,19 @@ class SprayingUAVPlanner:
         self.obstacles_position_ = np.array(obstacles)
         self.obstacles_radius_ = np.array(radius)
         self.lock_.release()
+
+    def eddiObsCallback(self, msg: Bool) -> None:
+        """
+        Callback function for the obstacle subscriber.
+
+        Args:
+            msg (PoseArray): PoseArray message containing the position and radius of the
+                             detected obstacles.
+        """
+        self.eddi_obs_ = msg.data
+        if self.eddi_obs_:
+            rospy.logwarn("A security EDDI has been triggered, going back home.")
+            rospy.logwarn("Using old map to go back home.")
 
     # =============================================================================
     #        Waypoints & Heightmap
@@ -946,6 +967,9 @@ class SprayingUAVPlanner:
 
         while (not rospy.is_shutdown()) and (way_point_id < len(self.way_points_xyz)):
             self.lock_.acquire()
+            if self.eddi_obs_:  # EDDI is detecting an obstacle
+                way_point_id = -1
+
             if self.getDistanceToWayPoint(way_point_id) < self.d_threshold_:
                 rospy.loginfo("Way point reached")
                 self.updateReached(way_point_id)

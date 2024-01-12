@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 
-import pandas as pd
 import numpy as np
 import threading
-import copy
 
 import rospy
 import cv2
 
-from geographic_msgs.msg import GeoPoseStamped, GeoPointStamped
-from std_msgs.msg import Bool
+from geographic_msgs.msg import GeoPointStamped
 
 from mavros_msgs.srv import (
     CommandBool,
@@ -26,10 +23,9 @@ from geometry_msgs.msg import (
     TwistStamped,
     PoseArray,
     Quaternion,
-    PointStamped,
 )
 
-from sprayer_path_planner.msg import PointId, PointIdArray
+from sesame_navigation.msg import PointIdArray
 
 import tf2_ros
 import tf2_geometry_msgs

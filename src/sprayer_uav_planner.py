@@ -479,6 +479,7 @@ class SprayingUAVPlanner:
         row_number, plant_count = np.unique(
             np.array((self.field_coords_["row_number"])), return_counts=True
         )
+        start_idx = np.min(row_number)
         row_number.sort()
 
         # Initializes the dictionnaries
@@ -496,11 +497,11 @@ class SprayingUAVPlanner:
                     (self.field_coords_["row_number"] == i)
                     * (self.field_coords_["plant_id"] == plant_id)
                 ].index[0]
-                if i % 2 == 0:
-                    row_count = plant_count[i - 1] - j
-                    order[index] = np.sum(plant_count[: i - 1]) + row_count - 1
+                if (i - start_idx + 1) % 2 == 0:
+                    row_count = plant_count[i - start_idx] - j
+                    order[index] = np.sum(plant_count[: i - start_idx]) + row_count - 1
                 else:
-                    order[index] = np.sum(plant_count[: i - 1]) + j
+                    order[index] = np.sum(plant_count[: i - start_idx]) + j
 
         # Flip the dictionnary to get the order from the index
         for key, value in order.items():
